@@ -4,7 +4,7 @@ import {
   TrendingUp, Box, Layers, ArrowRight, CheckCircle2, AlertCircle,
   Package, Table, List, BarChart2, Menu, X, ChevronRight,
   MapPin, PieChart as PieIcon, Activity, Zap, MoreHorizontal,
-  Calendar, ArrowUpRight
+  Calendar, ArrowUpRight, Bell, Send
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -150,59 +150,59 @@ const calculateKPIs = (data: any[]): KPI[] => {
 const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
   return (
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+      <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <div>
-          <h3 className="text-2xl font-black text-slate-900 tracking-tight">Pending Optimization Queue</h3>
-          <p className="text-slate-500 text-sm font-medium mt-1 flex items-center gap-2">
+          <h3 className="text-xl font-black text-slate-900 tracking-tight">Pending Optimization Queue</h3>
+          <p className="text-slate-500 text-xs font-medium mt-0.5 flex items-center gap-2">
             <Zap size={14} className="text-blue-600" />
             AI-identified routes ready for immediate consolidation
           </p>
         </div>
-        <button className="p-2.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
-          <MoreHorizontal size={20} />
+        <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
+          <MoreHorizontal size={18} />
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/50">
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Package size={14} />
                   Order ID
                 </div>
               </th>
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <MapPin size={14} />
                   Route (Origin → Dest)
                 </div>
               </th>
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Scale size={14} />
                   Weight
                 </div>
               </th>
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Box size={14} />
                   Volume
                 </div>
               </th>
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Calendar size={14} />
                   Delivery
                 </div>
               </th>
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">
                 <div className="flex items-center gap-2 justify-end">
                   <TrendingUp size={14} />
                   Potential Savings
                 </div>
               </th>
-              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100"></th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -215,7 +215,7 @@ const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
 
               return (
                 <tr key={i} className="hover:bg-blue-50/30 transition-all group cursor-default">
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="font-bold text-blue-600 text-sm tracking-tight">{order.order_id}</span>
                       <span className={`text-[10px] font-black tracking-wider w-fit mt-1 px-1.5 py-0.5 rounded ${priority === 'EXPRESS' ? 'text-rose-600 bg-rose-50 border border-rose-100' :
@@ -226,14 +226,14 @@ const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
                       </span>
                     </div>
                   </td>
-                  <td className="px-8 py-6 font-bold text-slate-900 text-sm">
+                  <td className="px-6 py-4 font-bold text-slate-900 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="text-slate-900 font-bold">{order.warehouse_city}</span>
                       <ArrowRight size={14} className="text-slate-300 group-hover:text-blue-400 transition-colors" />
                       <span className="text-slate-900 font-bold">{order.customer_city}</span>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="text-slate-900 font-bold text-sm tracking-tight">{weight.toLocaleString()} kg</span>
                       <div className="w-16 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
@@ -241,13 +241,13 @@ const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6 text-slate-600 font-bold text-sm">{volume.toFixed(1)} <span className="text-[10px] text-slate-400 uppercase ml-0.5">cu m</span></td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4 text-slate-600 font-bold text-sm">{volume.toFixed(1)} <span className="text-[10px] text-slate-400 uppercase ml-0.5">cu m</span></td>
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-slate-600 font-bold text-sm">
                       <span>{deliveryDate}</span>
                     </div>
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex flex-col items-end">
                       <span className="text-emerald-600 font-black text-lg leading-none italic tracking-tight">
                         +${savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
@@ -257,7 +257,7 @@ const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
                       </span>
                     </div>
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-6 py-4 text-right">
                     <button className="bg-white border border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 flex items-center gap-2 ml-auto shadow-sm">
                       Optimize
                       <ArrowUpRight size={14} />
@@ -315,7 +315,7 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.05 }}
-    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg border border-slate-100 hover:border-blue-100 transition-all duration-300 relative overflow-hidden group"
+    className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-lg border border-slate-100 hover:border-blue-100 transition-all duration-300 relative overflow-hidden group"
   >
     {/* Subtle Background Icon - Moved to Bottom Right & Cleaned Up */}
     <div className="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500 pointer-events-none transform rotate-12 group-hover:scale-110 group-hover:rotate-6">
@@ -342,8 +342,8 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     </div>
 
     <div className="relative z-10">
-      <h3 className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 truncate">{kpi.label}</h3>
-      <p className="text-3xl font-black text-slate-900 tracking-tight">{kpi.value}</p>
+      <h3 className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1 truncate">{kpi.label}</h3>
+      <p className="text-2xl font-extrabold text-slate-900 tracking-tight">{kpi.value}</p>
     </div>
   </motion.div>
 );
@@ -357,8 +357,8 @@ const LineChartCard = () => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-2xl font-bold text-slate-900 mb-2">Truck Utilization Trend</h3>
           <p className="text-sm text-slate-500 flex items-center gap-2">
@@ -408,14 +408,14 @@ const OrderOverview = ({ data }: { data: any[] }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-3">
           <div className="p-2 bg-blue-50 rounded-xl">
             <MapPin size={24} className="text-blue-600" />
           </div>
           Top Destination Cities
         </h3>
-        <div className="space-y-6">
+        <div className="space-y-4">
           {topCities.map(([city, count], i) => (
             <div key={city} className="flex items-center gap-4">
               <span className="text-sm font-bold text-slate-400 w-8 text-center">{i + 1}</span>
@@ -438,8 +438,8 @@ const OrderOverview = ({ data }: { data: any[] }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
-        <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+        <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-3">
           <div className="p-2 bg-indigo-50 rounded-xl">
             <PieIcon size={24} className="text-indigo-600" />
           </div>
@@ -880,9 +880,9 @@ export default function App() {
           </div>
         </header>
 
-        <main className="p-6 md:p-10 lg:p-12 space-y-12 overflow-y-auto">
+        <main className="p-6 md:p-10 lg:p-12 space-y-8 overflow-y-auto">
           {activeTab === 'dashboard' && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
               {/* 6 KPI Line */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                 {processedKPIs.map((kpi, index) => (
@@ -1153,8 +1153,9 @@ export default function App() {
                         </div>
                       </div>
 
-                      <button className="p-3 text-slate-300 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all">
-                        <ChevronRight size={24} />
+                      <button className="bg-rose-50 text-rose-600 font-bold px-4 py-2 rounded-xl text-xs hover:bg-rose-600 hover:text-white transition-all flex items-center gap-2 border border-rose-100 shadow-sm ml-auto transform group-hover:scale-105">
+                        <Bell size={14} />
+                        Send Alert
                       </button>
                     </motion.div>
                   );
