@@ -60,7 +60,7 @@ export default defineConfig({
       '/api/n8n': {
         target: 'https://n8n.sofiatechnology.ai',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/n8n/, '/webhook-test/ba5989c9-090f-4528-8faf-5d54c906fa04'),
+        rewrite: (path) => path.replace(/^\/api\/n8n/, '/webhook/ba5989c9-090f-4528-8faf-5d54c906fa04'),
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
             console.log('proxy error', err);

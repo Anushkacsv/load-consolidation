@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/api/n8n",
-            "destination": "https://n8n.sofiatechnology.ai/webhook-test/ba5989c9-090f-4528-8faf-5d54c906fa04"
+            "destination": "https://n8n.sofiatechnology.ai/webhook/ba5989c9-090f-4528-8faf-5d54c906fa04"
         }
     ]
 }
