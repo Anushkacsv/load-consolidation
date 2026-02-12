@@ -1,6 +1,14 @@
-import React, { useState } from 'react';
-import { LayoutDashboard, Truck, DollarSign, Scale, RotateCcw, Clock, TrendingUp, Box, Layers, ArrowRight, CheckCircle2, AlertCircle, Package, Table, List, BarChart2 } from 'lucide-react';
+import {
+  LayoutDashboard, Truck, DollarSign, Scale, RotateCcw, Clock,
+  TrendingUp, Box, Layers, ArrowRight, CheckCircle2, AlertCircle,
+  Package, Table, List, BarChart2, Menu, X, ChevronRight,
+  MapPin, PieChart as PieIcon, Activity, Zap
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, AreaChart, Area, PieChart, Cell, Pie
+} from 'recharts';
 
 // --- Data ---
 import dataset from './data/dataset.json';
@@ -125,12 +133,15 @@ const calculateKPIs = (data: any[]): KPI[] => {
   const savingPotential = totalCost * 0.145;
   const consolidationOpportunities = Math.floor(totalOrders * 0.28);
 
+  const totalSavings = totalCost * 0.124;
+
   return [
-    { label: 'Cities Covered', value: cities.size.toString(), change: 'Across India', trend: 'neutral', icon: List, color: 'text-blue-600' },
-    { label: 'Truck Utilization Rate', value: `${avgUtilization.toFixed(1)}%`, change: '+5.2%', trend: 'up', icon: BarChart2, color: 'text-emerald-600' },
-    { label: 'Consolidation Opportunities', value: consolidationOpportunities.toString(), change: 'Actionable', trend: 'neutral', icon: Layers, color: 'text-indigo-600' },
-    { label: 'No of Shipments', value: numShipments.toLocaleString(), change: '-8%', trend: 'down', icon: Truck, color: 'text-amber-600' },
-    { label: 'Average Shipment Cost', value: `$${avgShipmentCost.toFixed(0)}`, change: '-4.2%', trend: 'down', icon: DollarSign, color: 'text-rose-600' },
+    { label: 'Total Orders', value: totalOrders.toLocaleString(), change: 'Across India', trend: 'neutral', icon: List, color: 'text-blue-600' },
+    { label: 'Avg Utilization', value: `${avgUtilization.toFixed(1)}%`, change: '+5.2%', trend: 'up', icon: BarChart2, color: 'text-emerald-600' },
+    { label: 'Consolidation Ops', value: consolidationOpportunities.toString(), change: 'Actionable', trend: 'neutral', icon: Layers, color: 'text-indigo-600' },
+    { label: 'Total Shipments', value: numShipments.toLocaleString(), change: '-8%', trend: 'down', icon: Truck, color: 'text-amber-600' },
+    { label: 'Avg Ship Cost', value: `$${avgShipmentCost.toFixed(0)}`, change: '-4.2%', trend: 'down', icon: DollarSign, color: 'text-rose-600' },
+    { label: 'Potential Savings', value: `$${totalSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, change: '14.5%', trend: 'up', icon: TrendingUp, color: 'text-violet-600' },
   ];
 };
 
@@ -176,19 +187,19 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.05 }}
-    className="bg-white rounded-xl p-5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-blue-100 transition-all duration-300 relative overflow-hidden group"
+    className="bg-white rounded-xl p-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-blue-100 transition-all duration-300 relative overflow-hidden group min-w-[160px]"
   >
-    <div className={`absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500`}>
-      <kpi.icon size={80} className={kpi.color} />
+    <div className={`absolute top-0 right-0 p-3 opacity-[0.03] group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500`}>
+      <kpi.icon size={60} className={kpi.color} />
     </div>
 
-    <div className="flex items-start justify-between mb-4 relative z-10">
-      <div className={`p-2.5 rounded-lg bg-slate-50 ${kpi.color} bg-opacity-[0.08] group-hover:bg-opacity-15 transition-colors`}>
-        <kpi.icon size={22} className={kpi.color} />
+    <div className="flex items-start justify-between mb-3 relative z-10">
+      <div className={`p-1.5 rounded-lg bg-slate-50 ${kpi.color} bg-opacity-[0.08] group-hover:bg-opacity-15 transition-colors`}>
+        <kpi.icon size={18} className={kpi.color} />
       </div>
       {kpi.change && (
-        <span className={`text-xs font-medium px-2 py-1 rounded-full ${(kpi.trend === 'up' && (kpi.label === 'No of Orders' || kpi.label === 'Total Cost Saving Potential' || kpi.label === 'Consolidation Opportunities')) ||
-          (kpi.trend === 'down' && (kpi.label === 'No of Shipments' || kpi.label === 'Average Shipment Cost'))
+        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${(kpi.trend === 'up' && (kpi.label === 'Total Orders' || kpi.label === 'Potential Savings' || kpi.label === 'Consolidation Ops')) ||
+          (kpi.trend === 'down' && (kpi.label === 'Total Shipments' || kpi.label === 'Avg Ship Cost'))
           ? 'bg-emerald-50 text-emerald-600'
           : 'bg-red-50 text-red-600'
           }`}>
@@ -198,11 +209,138 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     </div>
 
     <div className="relative z-10">
-      <h3 className="text-slate-500 text-sm font-medium mb-1">{kpi.label}</h3>
-      <p className="text-2xl font-bold text-slate-800 tracking-tight">{kpi.value}</p>
+      <h3 className="text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-0.5 truncate">{kpi.label}</h3>
+      <p className="text-xl font-bold text-slate-800 tracking-tight">{kpi.value}</p>
     </div>
   </motion.div>
 );
+
+const LineChartCard = () => {
+  const chartData = [
+    { name: 'Mon', value: 45 }, { name: 'Tue', value: 52 },
+    { name: 'Wed', value: 48 }, { name: 'Thu', value: 61 },
+    { name: 'Fri', value: 55 }, { name: 'Sat', value: 58.8 },
+    { name: 'Sun', value: 54 },
+  ];
+
+  return (
+    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-lg font-bold text-slate-800">Truck Utilization Trend</h3>
+          <p className="text-sm text-slate-500 flex items-center gap-1">
+            Current: <span className="font-bold text-emerald-600">58.8%</span> (+5.2%)
+          </p>
+        </div>
+        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+          <Activity size={20} />
+        </div>
+      </div>
+      <div className="h-[240px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+            <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} unit="%" />
+            <Tooltip
+              contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            />
+            <Area type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
+const OrderOverview = ({ data }: { data: any[] }) => {
+  // Aggregate Top Cities
+  const cityCounts: { [key: string]: number } = {};
+  data.forEach(d => { if (d.customer_city) cityCounts[d.customer_city] = (cityCounts[d.customer_city] || 0) + 1; });
+  const topCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+  // Aggregate Goods Type
+  const typeCounts: { [key: string]: number } = {};
+  data.forEach(d => { if (d.goods_type) typeCounts[d.goods_type] = (typeCounts[d.goods_type] || 0) + 1; });
+  const goodsDistribution = Object.entries(typeCounts).map(([name, value]) => ({ name, value }));
+
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+        <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <MapPin size={20} className="text-blue-600" />
+          Top Destination Cities
+        </h3>
+        <div className="space-y-4">
+          {topCities.map(([city, count], i) => (
+            <div key={city} className="flex items-center gap-4">
+              <span className="text-xs font-bold text-slate-400 w-4">{i + 1}</span>
+              <div className="flex-1">
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium text-slate-700">{city}</span>
+                  <span className="text-sm font-bold text-slate-900">{count} orders</span>
+                </div>
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(count / data.length) * 100 * 5}%` }}
+                    className="h-full bg-blue-600 rounded-full"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+        <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <PieIcon size={20} className="text-indigo-600" />
+          Goods Type Distribution
+        </h3>
+        <div className="flex-1 flex flex-col md:flex-row items-center justify-around gap-8">
+          <div className="h-[180px] w-[180px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={goodsDistribution}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {goodsDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="space-y-2">
+            {goodsDistribution.map((item, i) => (
+              <div key={item.name} className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                <span className="text-sm font-medium text-slate-600 capitalize">{item.name}</span>
+                <span className="text-sm font-bold text-slate-900">({item.value})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 
@@ -400,6 +538,9 @@ const LoadingStep = ({ label, active, completed }: { label: string; active: bool
 );
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'consolidation' | 'ai'>('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -502,277 +643,273 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-              <Layers size={20} />
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans flex">
+      {/* Sidebar Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar */}
+      <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="h-full flex flex-col p-6">
+          <div className="flex items-center gap-3 mb-10">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 ring-4 ring-blue-50">
+              <Zap size={24} />
             </div>
-            <h1 className="text-lg font-bold text-slate-800">Load Consolidation Agent</h1>
+            <div>
+              <h1 className="text-xl font-black text-slate-900 tracking-tighter">LOCO</h1>
+              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Master Optimizer</p>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center text-xs text-slate-500 gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              System Operational
+
+          <nav className="flex-1 space-y-2">
+            <NavItem
+              active={activeTab === 'dashboard'}
+              onClick={() => { setActiveTab('dashboard'); setIsSidebarOpen(false); }}
+              icon={LayoutDashboard}
+              label="Dashboard"
+            />
+            <NavItem
+              active={activeTab === 'consolidation'}
+              onClick={() => { setActiveTab('consolidation'); setIsSidebarOpen(false); }}
+              icon={Layers}
+              label="Consolidation Agent"
+            />
+            <NavItem
+              active={activeTab === 'ai'}
+              onClick={() => { setActiveTab('ai'); setIsSidebarOpen(false); }}
+              icon={Activity}
+              label="AI Suggestions"
+              tag="Upcoming"
+            />
+          </nav>
+
+          <div className="mt-auto pt-6 border-t border-slate-100">
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-slate-500 uppercase">n8n Status</span>
+              </div>
+              <p className="text-xs font-medium text-slate-600">Connected to Sofia AI</p>
             </div>
-            <button className="p-2 text-slate-400 hover:text-slate-600">
-              <LayoutDashboard size={20} />
-            </button>
           </div>
         </div>
-      </header>
+      </aside>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-        {/* KPI Section */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-800">Performance Metrics</h2>
-            <select className="bg-white border border-slate-200 text-slate-600 text-sm rounded-lg px-3 py-1 outline-none focus:ring-2 focus:ring-blue-500">
-              <option>Last 30 Days</option>
-              <option>This Quarter</option>
-              <option>Year to Date</option>
-            </select>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-hidden">
+        {/* Header */}
+        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 text-slate-500">
+              <Menu size={20} />
+            </button>
+            <h2 className="text-lg font-bold text-slate-800 capitalize">{activeTab.replace('_', ' ')}</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {processedKPIs.map((kpi, index) => (
-              <KPICard key={index} kpi={kpi} index={index} />
-            ))}
-          </div>
-        </section>
 
-
-
-        {/* Action Section */}
-        <section className="space-y-6">
-          <div className="flex items-end justify-between border-b border-slate-200 pb-4">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">Consolidation Engine</h2>
-              <p className="text-slate-500 mt-1">
-                Run the agent to identify consolidation opportunities from pending orders.
-              </p>
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-2">
+              {[1, 2, 3].map(i => (
+                <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600`}>
+                  U{i}
+                </div>
+              ))}
             </div>
+            <button className="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100 transition-colors">
+              <Package size={20} />
+            </button>
           </div>
+        </header>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-center gap-3">
-              <AlertCircle size={20} />
-              <p className="text-sm font-medium">{error}</p>
-            </div>
+        <main className="p-4 md:p-8 space-y-8 overflow-y-auto">
+          {activeTab === 'dashboard' && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+              {/* 6 KPI Line */}
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+                {processedKPIs.map((kpi, index) => (
+                  <KPICard key={index} kpi={kpi} index={index} />
+                ))}
+              </div>
+
+              {/* Graphical Row */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <div className="xl:col-span-2">
+                  <LineChartCard />
+                </div>
+                <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl p-8 text-white relative overflow-hidden shadow-xl shadow-blue-200">
+                  <div className="relative z-10">
+                    <h3 className="text-xl font-bold mb-2">Automate Your Logistics</h3>
+                    <p className="text-blue-100 text-sm mb-6 max-w-[200px]">Run the consolidation engine to find hidden savings in your route data.</p>
+                    <button
+                      onClick={() => setActiveTab('consolidation')}
+                      className="bg-white text-blue-600 px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-blue-50 transition-all flex items-center gap-2"
+                    >
+                      Process Now
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                  <Layers size={140} className="absolute -bottom-10 -right-10 opacity-10 rotate-12" />
+                </div>
+              </div>
+
+              {/* Order Overview Section */}
+              <section className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-slate-900">Order Intelligence Overview</h3>
+                  <div className="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
+                    Dataset Size: <strong>{dataset.length}</strong> Orders
+                  </div>
+                </div>
+                <OrderOverview data={dataset} />
+              </section>
+            </motion.div>
           )}
 
-          <div className="relative min-h-[400px]">
-            <AnimatePresence mode="wait">
-              {shipments.length === 0 && !isProcessing && (
-                <motion.div
-                  key="start"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center"
-                >
-                  <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
-                    <Box size={40} />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Ready to Optimize</h3>
-                  <p className="text-slate-500 max-w-md mx-auto mb-8">
-                    There are <strong>{dataset.length}</strong> pending orders eligible for processing. The agent will analyze weight, route, and delivery windows to suggest optimal shipments.
-                  </p>
-                  <button
-                    onClick={handleRunAgent}
-                    className="group bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-blue-600/20 transform hover:-translate-y-0.5 transition-all flex items-center gap-2 mx-auto"
-                  >
-                    Check for Consolidations
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </button>
-                </motion.div>
+          {activeTab === 'consolidation' && (
+            <motion.section initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
+              <div className="flex items-end justify-between border-b border-slate-200 pb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Consolidation Engine</h2>
+                  <p className="text-slate-500 mt-1">Identify shipping efficiency opportunities using our n8n agent.</p>
+                </div>
+              </div>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-center gap-3">
+                  <AlertCircle size={20} />
+                  <p className="text-sm font-medium">{error}</p>
+                </div>
               )}
 
-              {isProcessing && (
-                <motion.div
-                  key="processing"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.4 }}
-                  className="bg-white rounded-xl shadow-lg border border-blue-100 p-8 relative overflow-hidden"
-                >
-                  <motion.div
-                    initial={{ top: "-100%" }}
-                    animate={{ top: "100%" }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                    className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-blue-50/50 to-transparent pointer-events-none"
-                  />
-
-                  <div className="max-w-2xl mx-auto space-y-8 relative z-10">
-                    <div className="text-center">
-                      <div className="relative w-20 h-20 mx-auto mb-6">
-                        <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                        <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Box className="text-blue-600 animate-pulse" size={24} />
-                        </div>
-                      </div>
-                      <h3 className="text-xl font-bold text-slate-900">Agent is Optimizing</h3>
-                      <p className="text-slate-500"> analyzing {dataset.length} orders for consolidation...</p>
-                    </div>
-
-                    <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-inner space-y-4">
-                      <LoadingStep label="Analyzing Pending Orders & Route Compatibility" active={loadingStep === 1} completed={loadingStep > 1} />
-                      <LoadingStep label="Querying Carrier Rates & Capacity Constraints" active={loadingStep === 2} completed={loadingStep > 2} />
-                      <LoadingStep label="Generating Shipment Manifests & Ops Instructions" active={loadingStep === 3} completed={loadingStep > 3} />
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {shipments.length > 0 && !isProcessing && (
-                <motion.div
-                  key="result"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-sm font-medium border border-emerald-100">
-                      <CheckCircle2 size={16} />
-                      Optimization Complete: {shipments.length} opportunities found
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg p-1">
-                        <button
-                          onClick={() => setViewType('cards')}
-                          className={`p-1.5 rounded-md transition-all ${viewType === 'cards' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
-                          title="Card View"
-                        >
-                          <LayoutDashboard size={18} />
-                        </button>
-                        <button
-                          onClick={() => setViewType('table')}
-                          className={`p-1.5 rounded-md transition-all ${viewType === 'table' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
-                          title="Table View"
-                        >
-                          <Table size={18} />
-                        </button>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setShipments([]);
-                          setCarrierFilter('all');
-                          setModeFilter('all');
-                          setWeightFilter('all');
-                          setTypeFilter('all');
-                        }}
-                        className="text-slate-400 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors"
-                      >
-                        <RotateCcw size={14} />
-                        Clear
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Filter Bar */}
-                  <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 px-3 border-r border-slate-200 mr-1">
-                      <List size={18} className="text-blue-600" />
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Quick Filters</span>
-                    </div>
-
-                    <div className="flex-1 flex flex-wrap items-center gap-3">
-                      <select
-                        value={carrierFilter}
-                        onChange={(e) => setCarrierFilter(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
-                      >
-                        <option value="all">Any Carrier</option>
-                        {uniqueCarriers.map(c => <option key={c} value={c}>{c}</option>)}
-                      </select>
-
-                      <select
-                        value={modeFilter}
-                        onChange={(e) => setModeFilter(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
-                      >
-                        <option value="all">Any Mode</option>
-                        {uniqueModes.map(m => <option key={m} value={m}>{m}</option>)}
-                      </select>
-
-                      <select
-                        value={weightFilter}
-                        onChange={(e) => setWeightFilter(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
-                      >
-                        <option value="all">Any Weight</option>
-                        {uniqueWeights.map(w => <option key={w} value={w}>{w}</option>)}
-                      </select>
-
-                      <select
-                        value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value)}
-                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
-                      >
-                        <option value="all">Any Type</option>
-                        <option value="consolidated">Consolidated</option>
-                        <option value="single">Single Order</option>
-                      </select>
-                    </div>
-
-                    {(carrierFilter !== 'all' || modeFilter !== 'all' || weightFilter !== 'all' || typeFilter !== 'all') && (
-                      <button
-                        onClick={() => {
-                          setCarrierFilter('all');
-                          setModeFilter('all');
-                          setWeightFilter('all');
-                          setTypeFilter('all');
-                        }}
-                        className="text-[10px] font-bold text-blue-600 hover:text-blue-700 uppercase tracking-widest px-3 py-1 hover:bg-blue-50 rounded-md transition-colors"
-                      >
-                        Reset Filters
-                      </button>
-                    )}
-                  </div>
-
-                  {viewType === 'cards' ? (
-                    <div className="space-y-8">
-                      {filteredShipments.slice(0, visibleCount).map((shipment, idx) => (
-                        <ShipmentDetail key={shipment.id || idx} shipment={shipment} />
-                      ))}
-
-                      {filteredShipments.length === 0 && (
-                        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-500">
-                          No shipments match the selected filters.
-                        </div>
-                      )}
-
-                      {visibleCount < filteredShipments.length && (
-                        <div className="text-center pt-4">
-                          <button
-                            onClick={() => setVisibleCount(prev => prev + 3)}
-                            className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
-                          >
-                            Load More Shipments ({filteredShipments.length - visibleCount} remaining)
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
+              <div className="relative min-h-[400px]">
+                <AnimatePresence mode="wait">
+                  {shipments.length === 0 && !isProcessing && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.99 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                      key="start"
+                      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                      className="bg-white rounded-2xl shadow-sm border border-slate-200 p-20 text-center"
                     >
-                      <ShipmentTable shipments={filteredShipments} />
+                      <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600 border-4 border-white shadow-inner">
+                        <Box size={40} />
+                      </div>
+                      <h3 className="text-2xl font-bold text-slate-900 mb-2">Ready to Process</h3>
+                      <p className="text-slate-500 max-w-md mx-auto mb-10 text-lg">
+                        Processing <strong>{dataset.length}</strong> orders for geographic and route-based consolidation.
+                      </p>
+                      <button
+                        onClick={handleRunAgent}
+                        className="group bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-200 transform hover:-translate-y-1 transition-all flex items-center gap-3 mx-auto text-lg"
+                      >
+                        Start Consolidation Agent
+                        <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
                     </motion.div>
                   )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </section>
-      </main>
+
+                  {isProcessing && (
+                    <motion.div
+                      key="processing"
+                      initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
+                      className="bg-white rounded-2xl shadow-xl border border-blue-50 p-12 relative overflow-hidden"
+                    >
+                      <div className="max-w-2xl mx-auto space-y-12 relative z-10 text-center">
+                        <div className="relative w-24 h-24 mx-auto mb-6">
+                          <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                          <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Zap className="text-blue-600 animate-pulse" size={32} />
+                          </div>
+                        </div>
+                        <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Agent is Optimizing</h3>
+                        <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 space-y-6 text-left">
+                          <LoadingStep label="Geographic Cluster Identification" active={loadingStep === 1} completed={loadingStep > 1} />
+                          <LoadingStep label="Carrier Rate Multi-Point Analysis" active={loadingStep === 2} completed={loadingStep > 2} />
+                          <LoadingStep label="Final Shipment Plan Generation" active={loadingStep === 3} completed={loadingStep > 3} />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {shipments.length > 0 && !isProcessing && (
+                    <motion.div key="result" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
+                          <CheckCircle2 size={18} />
+                          Found {shipments.length} Consolidation Strategies
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                            <button onClick={() => setViewType('cards')} className={`p-2 rounded-lg transition-all ${viewType === 'cards' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400'}`}>
+                              <LayoutDashboard size={18} />
+                            </button>
+                            <button onClick={() => setViewType('table')} className={`p-2 rounded-lg transition-all ${viewType === 'table' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400'}`}>
+                              <Table size={18} />
+                            </button>
+                          </div>
+                          <button onClick={() => setShipments([])} className="bg-white border border-slate-200 p-2 rounded-xl text-slate-500 hover:text-blue-600 transition-all shadow-sm">
+                            <RotateCcw size={18} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {viewType === 'cards' ? (
+                        <div className="space-y-8">
+                          {filteredShipments.slice(0, visibleCount).map((shipment, idx) => (
+                            <ShipmentDetail key={shipment.id || idx} shipment={shipment} />
+                          ))}
+                          {visibleCount < filteredShipments.length && (
+                            <button onClick={() => setVisibleCount(c => c + 3)} className="w-full py-4 bg-white border-2 border-dashed border-slate-200 rounded-xl text-slate-500 font-bold hover:border-blue-300 hover:text-blue-600 transition-all">
+                              View More Results ({filteredShipments.length - visibleCount})
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <ShipmentTable shipments={filteredShipments} />
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.section>
+          )}
+
+          {activeTab === 'ai' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center">
+              <div className="w-20 h-20 bg-violet-50 text-violet-600 rounded-3xl flex items-center justify-center mb-6 border-2 border-violet-100 italic font-black text-2xl">
+                AI
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">Predictive AI Suggestions</h3>
+              <p className="text-slate-500 max-w-sm mx-auto mb-8 text-lg">We're building an AI that predicts market rate fluctuations and suggests pre-booking slots.</p>
+              <div className="px-6 py-2 bg-slate-200 rounded-full text-xs font-bold text-slate-600 uppercase tracking-widest">Available Q3 2026</div>
+            </motion.div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
+
+const NavItem = ({ active, icon: Icon, label, onClick, tag }: any) => (
+  <button
+    onClick={onClick}
+    className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all duration-300 group ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-blue-50 hover:text-blue-600'}`}
+  >
+    <div className="flex items-center gap-3">
+      <Icon size={20} className={active ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'} />
+      <span className="text-sm font-bold tracking-tight">{label}</span>
+    </div>
+    {tag ? (
+      <span className={`text-[10px] px-1.5 py-0.5 rounded ${active ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-500'} font-bold uppercase`}>{tag}</span>
+    ) : (
+      active && <ChevronRight size={16} />
+    )}
+  </button>
+);
