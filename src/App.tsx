@@ -447,7 +447,7 @@ export default function App() {
         body: JSON.stringify({
           action: 'analyze_consolidation',
           timestamp: new Date().toISOString(),
-          orders: dataset.slice(0, 50)
+          orders: dataset.slice(0, 5)
         }),
       });
 
