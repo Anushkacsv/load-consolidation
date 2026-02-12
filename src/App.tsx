@@ -407,6 +407,27 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [viewType, setViewType] = useState<'cards' | 'table'>('cards');
 
+  // Filter States
+  const [carrierFilter, setCarrierFilter] = useState<string>('all');
+  const [modeFilter, setModeFilter] = useState<string>('all');
+  const [weightFilter, setWeightFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+
+  const filteredShipments = shipments.filter(shipment => {
+    const matchesCarrier = carrierFilter === 'all' || shipment.carrier === carrierFilter;
+    const matchesMode = modeFilter === 'all' || shipment.mode === modeFilter;
+    const matchesWeight = weightFilter === 'all' || shipment.weight_class === weightFilter;
+    const matchesType = typeFilter === 'all' ||
+      (typeFilter === 'consolidated' ? shipment.type.toLowerCase().includes('consolidated') :
+        typeFilter === 'single' ? !shipment.type.toLowerCase().includes('consolidated') : true);
+
+    return matchesCarrier && matchesMode && matchesWeight && matchesType;
+  });
+
+  const uniqueCarriers = Array.from(new Set(shipments.map(s => s.carrier))).filter(Boolean);
+  const uniqueModes = Array.from(new Set(shipments.map(s => s.mode))).filter(Boolean);
+  const uniqueWeights = Array.from(new Set(shipments.map(s => s.weight_class))).filter(Boolean);
+
   const handleRunAgent = async () => {
     setIsProcessing(true);
     setShipments([]);
@@ -639,7 +660,13 @@ export default function App() {
                         </button>
                       </div>
                       <button
-                        onClick={() => setShipments([])}
+                        onClick={() => {
+                          setShipments([]);
+                          setCarrierFilter('all');
+                          setModeFilter('all');
+                          setWeightFilter('all');
+                          setTypeFilter('all');
+                        }}
                         className="text-slate-400 hover:text-blue-600 text-sm font-medium flex items-center gap-1 transition-colors"
                       >
                         <RotateCcw size={14} />
@@ -648,19 +675,86 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* Filter Bar */}
+                  <div className="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-2 px-3 border-r border-slate-200 mr-1">
+                      <List size={18} className="text-blue-600" />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Quick Filters</span>
+                    </div>
+
+                    <div className="flex-1 flex flex-wrap items-center gap-3">
+                      <select
+                        value={carrierFilter}
+                        onChange={(e) => setCarrierFilter(e.target.value)}
+                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
+                      >
+                        <option value="all">Any Carrier</option>
+                        {uniqueCarriers.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+
+                      <select
+                        value={modeFilter}
+                        onChange={(e) => setModeFilter(e.target.value)}
+                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
+                      >
+                        <option value="all">Any Mode</option>
+                        {uniqueModes.map(m => <option key={m} value={m}>{m}</option>)}
+                      </select>
+
+                      <select
+                        value={weightFilter}
+                        onChange={(e) => setWeightFilter(e.target.value)}
+                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
+                      >
+                        <option value="all">Any Weight</option>
+                        {uniqueWeights.map(w => <option key={w} value={w}>{w}</option>)}
+                      </select>
+
+                      <select
+                        value={typeFilter}
+                        onChange={(e) => setTypeFilter(e.target.value)}
+                        className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-semibold cursor-pointer"
+                      >
+                        <option value="all">Any Type</option>
+                        <option value="consolidated">Consolidated</option>
+                        <option value="single">Single Order</option>
+                      </select>
+                    </div>
+
+                    {(carrierFilter !== 'all' || modeFilter !== 'all' || weightFilter !== 'all' || typeFilter !== 'all') && (
+                      <button
+                        onClick={() => {
+                          setCarrierFilter('all');
+                          setModeFilter('all');
+                          setWeightFilter('all');
+                          setTypeFilter('all');
+                        }}
+                        className="text-[10px] font-bold text-blue-600 hover:text-blue-700 uppercase tracking-widest px-3 py-1 hover:bg-blue-50 rounded-md transition-colors"
+                      >
+                        Reset Filters
+                      </button>
+                    )}
+                  </div>
+
                   {viewType === 'cards' ? (
                     <div className="space-y-8">
-                      {shipments.slice(0, visibleCount).map((shipment, idx) => (
+                      {filteredShipments.slice(0, visibleCount).map((shipment, idx) => (
                         <ShipmentDetail key={shipment.id || idx} shipment={shipment} />
                       ))}
 
-                      {visibleCount < shipments.length && (
+                      {filteredShipments.length === 0 && (
+                        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center text-slate-500">
+                          No shipments match the selected filters.
+                        </div>
+                      )}
+
+                      {visibleCount < filteredShipments.length && (
                         <div className="text-center pt-4">
                           <button
                             onClick={() => setVisibleCount(prev => prev + 3)}
                             className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
                           >
-                            Load More Shipments ({shipments.length - visibleCount} remaining)
+                            Load More Shipments ({filteredShipments.length - visibleCount} remaining)
                           </button>
                         </div>
                       )}
@@ -670,7 +764,7 @@ export default function App() {
                       initial={{ opacity: 0, scale: 0.99 }}
                       animate={{ opacity: 1, scale: 1 }}
                     >
-                      <ShipmentTable shipments={shipments} />
+                      <ShipmentTable shipments={filteredShipments} />
                     </motion.div>
                   )}
                 </motion.div>
