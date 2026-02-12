@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import {
   LayoutDashboard, Truck, DollarSign, Scale, RotateCcw, Clock,
   TrendingUp, Box, Layers, ArrowRight, CheckCircle2, AlertCircle,
   Package, Table, List, BarChart2, Menu, X, ChevronRight,
-  MapPin, PieChart as PieIcon, Activity, Zap
+  MapPin, PieChart as PieIcon, Activity, Zap, MoreHorizontal,
+  Calendar, ArrowUpRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -137,12 +139,138 @@ const calculateKPIs = (data: any[]): KPI[] => {
 
   return [
     { label: 'Total Orders', value: totalOrders.toLocaleString(), change: 'Across India', trend: 'neutral', icon: List, color: 'text-blue-600' },
-    { label: 'Avg Utilization', value: `${avgUtilization.toFixed(1)}%`, change: '+5.2%', trend: 'up', icon: BarChart2, color: 'text-emerald-600' },
+    { label: 'Avg Truck Uitilized', value: `${avgUtilization.toFixed(1)}%`, change: '+5.2%', trend: 'up', icon: BarChart2, color: 'text-emerald-600' },
     { label: 'Consolidation Ops', value: consolidationOpportunities.toString(), change: 'Actionable', trend: 'neutral', icon: Layers, color: 'text-indigo-600' },
     { label: 'Total Shipments', value: numShipments.toLocaleString(), change: '-8%', trend: 'down', icon: Truck, color: 'text-amber-600' },
     { label: 'Avg Ship Cost', value: `$${avgShipmentCost.toFixed(0)}`, change: '-4.2%', trend: 'down', icon: DollarSign, color: 'text-rose-600' },
     { label: 'Potential Savings', value: `$${totalSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, change: '14.5%', trend: 'up', icon: TrendingUp, color: 'text-violet-600' },
   ];
+};
+
+const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
+  return (
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+        <div>
+          <h3 className="text-2xl font-black text-slate-900 tracking-tight">Pending Optimization Queue</h3>
+          <p className="text-slate-500 text-sm font-medium mt-1 flex items-center gap-2">
+            <Zap size={14} className="text-blue-600" />
+            AI-identified routes ready for immediate consolidation
+          </p>
+        </div>
+        <button className="p-2.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
+          <MoreHorizontal size={20} />
+        </button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50/50">
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Package size={14} />
+                  Order ID
+                </div>
+              </th>
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <MapPin size={14} />
+                  Route (Origin → Dest)
+                </div>
+              </th>
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Scale size={14} />
+                  Weight
+                </div>
+              </th>
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Box size={14} />
+                  Volume
+                </div>
+              </th>
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Calendar size={14} />
+                  Delivery
+                </div>
+              </th>
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">
+                <div className="flex items-center gap-2 justify-end">
+                  <TrendingUp size={14} />
+                  Potential Savings
+                </div>
+              </th>
+              <th className="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {data.slice(0, 6).map((order, i) => {
+              const weight = order.order_weight_kg;
+              const volume = order.order_volume_cbm;
+              const deliveryDate = new Date(order.planned_delivery_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+              const priority = order.customer_priority.toUpperCase();
+              const savings = weight * 0.15;
+
+              return (
+                <tr key={i} className="hover:bg-blue-50/30 transition-all group cursor-default">
+                  <td className="px-8 py-6">
+                    <div className="flex flex-col">
+                      <span className="font-bold text-blue-600 text-sm tracking-tight">{order.order_id}</span>
+                      <span className={`text-[10px] font-black tracking-wider w-fit mt-1 px-1.5 py-0.5 rounded ${priority === 'EXPRESS' ? 'text-rose-600 bg-rose-50 border border-rose-100' :
+                        priority === 'HIGH' ? 'text-amber-600 bg-amber-50 border border-amber-100' :
+                          'text-slate-500 bg-slate-50 border border-slate-100'
+                        }`}>
+                        {priority}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 font-bold text-slate-900 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-900 font-bold">{order.warehouse_city}</span>
+                      <ArrowRight size={14} className="text-slate-300 group-hover:text-blue-400 transition-colors" />
+                      <span className="text-slate-900 font-bold">{order.customer_city}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex flex-col">
+                      <span className="text-slate-900 font-bold text-sm tracking-tight">{weight.toLocaleString()} kg</span>
+                      <div className="w-16 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-blue-500/30" style={{ width: `${Math.min(100, (weight / 5000) * 100)}%` }} />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 text-slate-600 font-bold text-sm">{volume.toFixed(1)} <span className="text-[10px] text-slate-400 uppercase ml-0.5">cu m</span></td>
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2 text-slate-600 font-bold text-sm">
+                      <span>{deliveryDate}</span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <div className="flex flex-col items-end">
+                      <span className="text-emerald-600 font-black text-lg leading-none italic tracking-tight">
+                        +${savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mt-1">
+                        Est. Savings
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 text-right">
+                    <button className="bg-white border border-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 flex items-center gap-2 ml-auto shadow-sm">
+                      Optimize
+                      <ArrowUpRight size={14} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 };
 
 const processedKPIs = calculateKPIs(dataset);
@@ -187,21 +315,26 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.05 }}
-    className="bg-white rounded-xl p-4 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-blue-100 transition-all duration-300 relative overflow-hidden group min-w-[160px]"
+    className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg border border-slate-100 hover:border-blue-100 transition-all duration-300 relative overflow-hidden group"
   >
-    <div className={`absolute top-0 right-0 p-3 opacity-[0.03] group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500`}>
-      <kpi.icon size={60} className={kpi.color} />
+    {/* Subtle Background Icon - Moved to Bottom Right & Cleaned Up */}
+    <div className="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500 pointer-events-none transform rotate-12 group-hover:scale-110 group-hover:rotate-6">
+      <kpi.icon size={120} className="text-slate-800" strokeWidth={1.5} />
     </div>
 
-    <div className="flex items-start justify-between mb-3 relative z-10">
-      <div className={`p-1.5 rounded-lg bg-slate-50 ${kpi.color} bg-opacity-[0.08] group-hover:bg-opacity-15 transition-colors`}>
-        <kpi.icon size={18} className={kpi.color} />
+    <div className="flex items-start justify-between mb-4 relative z-10">
+      <div className={`p-3 rounded-xl bg-slate-50 ${kpi.color} bg-opacity-[0.1] group-hover:bg-opacity-20 transition-colors shadow-sm`}>
+        <kpi.icon size={24} className={kpi.color} />
       </div>
       {kpi.change && (
-        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${(kpi.trend === 'up' && (kpi.label === 'Total Orders' || kpi.label === 'Potential Savings' || kpi.label === 'Consolidation Ops')) ||
+        <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${(kpi.trend === 'up' && kpi.label !== 'Total Orders' && kpi.label !== 'Consolidation Ops') ||
           (kpi.trend === 'down' && (kpi.label === 'Total Shipments' || kpi.label === 'Avg Ship Cost'))
-          ? 'bg-emerald-50 text-emerald-600'
-          : 'bg-red-50 text-red-600'
+          ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+          : (kpi.trend === 'down' && kpi.label !== 'Total Shipments' && kpi.label !== 'Avg Ship Cost')
+            ? 'bg-red-50 text-red-700 border-red-100'
+            : kpi.trend === 'neutral'
+              ? 'bg-blue-50 text-blue-700 border-blue-100'
+              : 'bg-emerald-50 text-emerald-700 border-emerald-100'
           }`}>
           {kpi.change}
         </span>
@@ -209,8 +342,8 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     </div>
 
     <div className="relative z-10">
-      <h3 className="text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-0.5 truncate">{kpi.label}</h3>
-      <p className="text-xl font-bold text-slate-800 tracking-tight">{kpi.value}</p>
+      <h3 className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 truncate">{kpi.label}</h3>
+      <p className="text-3xl font-black text-slate-900 tracking-tight">{kpi.value}</p>
     </div>
   </motion.div>
 );
@@ -224,19 +357,19 @@ const LineChartCard = () => {
   ];
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-bold text-slate-800">Truck Utilization Trend</h3>
-          <p className="text-sm text-slate-500 flex items-center gap-1">
-            Current: <span className="font-bold text-emerald-600">58.8%</span> (+5.2%)
+          <h3 className="text-2xl font-bold text-slate-900 mb-2">Truck Utilization Trend</h3>
+          <p className="text-sm text-slate-500 flex items-center gap-2">
+            Current Rate: <span className="font-bold text-emerald-600 text-lg">58.8%</span> <span className="text-emerald-600 font-semibold">(+5.2%)</span>
           </p>
         </div>
-        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-          <Activity size={20} />
+        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl shadow-sm">
+          <Activity size={24} />
         </div>
       </div>
-      <div className="h-[240px] w-full">
+      <div className="h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
@@ -264,6 +397,7 @@ const OrderOverview = ({ data }: { data: any[] }) => {
   const cityCounts: { [key: string]: number } = {};
   data.forEach(d => { if (d.customer_city) cityCounts[d.customer_city] = (cityCounts[d.customer_city] || 0) + 1; });
   const topCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const maxCityCount = topCities.length > 0 ? topCities[0][1] : 1;
 
   // Aggregate Goods Type
   const typeCounts: { [key: string]: number } = {};
@@ -273,25 +407,28 @@ const OrderOverview = ({ data }: { data: any[] }) => {
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-        <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-          <MapPin size={20} className="text-blue-600" />
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+          <div className="p-2 bg-blue-50 rounded-xl">
+            <MapPin size={24} className="text-blue-600" />
+          </div>
           Top Destination Cities
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {topCities.map(([city, count], i) => (
             <div key={city} className="flex items-center gap-4">
-              <span className="text-xs font-bold text-slate-400 w-4">{i + 1}</span>
-              <div className="flex-1">
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium text-slate-700">{city}</span>
-                  <span className="text-sm font-bold text-slate-900">{count} orders</span>
+              <span className="text-sm font-bold text-slate-400 w-8 text-center">{i + 1}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center mb-2 gap-2">
+                  <span className="text-base font-semibold text-slate-800 truncate">{city}</span>
+                  <span className="text-sm font-bold text-slate-600 whitespace-nowrap">{count} orders</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${(count / data.length) * 100 * 5}%` }}
+                    animate={{ width: `${(count / maxCityCount) * 100}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
                     className="h-full bg-blue-600 rounded-full"
                   />
                 </div>
@@ -301,13 +438,15 @@ const OrderOverview = ({ data }: { data: any[] }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
-        <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-          <PieIcon size={20} className="text-indigo-600" />
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+        <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+          <div className="p-2 bg-indigo-50 rounded-xl">
+            <PieIcon size={24} className="text-indigo-600" />
+          </div>
           Goods Type Distribution
         </h3>
-        <div className="flex-1 flex flex-col md:flex-row items-center justify-around gap-8">
-          <div className="h-[180px] w-[180px]">
+        <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-8 lg:gap-12">
+          <div className="h-[200px] w-[220px] shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -323,15 +462,17 @@ const OrderOverview = ({ data }: { data: any[] }) => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-3">
             {goodsDistribution.map((item, i) => (
               <div key={item.name} className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
-                <span className="text-sm font-medium text-slate-600 capitalize">{item.name}</span>
+                <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                <span className="text-sm font-semibold text-slate-700 capitalize">{item.name}</span>
                 <span className="text-sm font-bold text-slate-900">({item.value})</span>
               </div>
             ))}
@@ -538,7 +679,7 @@ const LoadingStep = ({ label, active, completed }: { label: string; active: bool
 );
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'consolidation' | 'ai'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'consolidation' | 'shipments' | 'ai'>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -563,6 +704,25 @@ export default function App() {
         typeFilter === 'single' ? !shipment.type.toLowerCase().includes('consolidated') : true);
 
     return matchesCarrier && matchesMode && matchesWeight && matchesType;
+  });
+
+  // Shipment Overview States
+  const [shipmentCarrier, setShipmentCarrier] = useState<string>('All Carriers');
+  const [shipmentMode, setShipmentMode] = useState<string>('All Modes');
+  const [shipmentPriority, setShipmentPriority] = useState<string>('All Priorities');
+
+  const allShipmentCarriers = Array.from(new Set(dataset.map(d => d.carrier_name))).sort();
+  const allPriorities = Array.from(new Set(dataset.map(d => d.customer_priority))).sort();
+
+  const filteredDataset = dataset.filter(d => {
+    const matchesCarrier = shipmentCarrier === 'All Carriers' || d.carrier_name === shipmentCarrier;
+    const matchesPriority = shipmentPriority === 'All Priorities' || d.customer_priority === shipmentPriority;
+
+    // For FTL/LTL, let's assume if weight > 2000 it's FTL, else LTL for this demo
+    const isFTL = d.order_weight_kg > 2000;
+    const matchesMode = shipmentMode === 'All Modes' || (shipmentMode === 'FTL' ? isFTL : !isFTL);
+
+    return matchesCarrier && matchesMode && matchesPriority;
   });
 
   const uniqueCarriers = Array.from(new Set(shipments.map(s => s.carrier))).filter(Boolean);
@@ -643,7 +803,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 text-slate-900 font-sans flex">
       {/* Sidebar Overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -658,19 +818,19 @@ export default function App() {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
-        <div className="h-full flex flex-col p-6">
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200 ring-4 ring-blue-50">
-              <Zap size={24} />
+      <aside className={`fixed lg:sticky inset-y-0 left-0 top-0 h-screen w-72 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 shadow-xl lg:shadow-none ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="h-full flex flex-col p-8">
+          <div className="flex items-center gap-4 mb-12">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-200 ring-4 ring-blue-50">
+              <Zap size={28} strokeWidth={2.5} />
             </div>
             <div>
-              <h1 className="text-xl font-black text-slate-900 tracking-tighter">LOCO</h1>
-              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Master Optimizer</p>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight">LOCO</h1>
+              <p className="text-[11px] font-bold text-blue-600 uppercase tracking-widest">Master Optimizer</p>
             </div>
           </div>
 
-          <nav className="flex-1 space-y-2">
+          <nav className="flex-1 space-y-3">
             <NavItem
               active={activeTab === 'dashboard'}
               onClick={() => { setActiveTab('dashboard'); setIsSidebarOpen(false); }}
@@ -684,6 +844,12 @@ export default function App() {
               label="Consolidation Agent"
             />
             <NavItem
+              active={activeTab === 'shipments'}
+              onClick={() => { setActiveTab('shipments'); setIsSidebarOpen(false); }}
+              icon={Package}
+              label="Shipments Overview"
+            />
+            <NavItem
               active={activeTab === 'ai'}
               onClick={() => { setActiveTab('ai'); setIsSidebarOpen(false); }}
               icon={Activity}
@@ -692,83 +858,73 @@ export default function App() {
             />
           </nav>
 
-          <div className="mt-auto pt-6 border-t border-slate-100">
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-slate-500 uppercase">n8n Status</span>
-              </div>
-              <p className="text-xs font-medium text-slate-600">Connected to Sofia AI</p>
-            </div>
-          </div>
+
         </div>
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-hidden">
         {/* Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-6 h-16 flex items-center justify-between">
+        <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-30 px-6 md:px-10 lg:px-12 h-20 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 text-slate-500">
-              <Menu size={20} />
+            <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2.5 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
+              <Menu size={22} />
             </button>
-            <h2 className="text-lg font-bold text-slate-800 capitalize">{activeTab.replace('_', ' ')}</h2>
+            <h2 className="text-2xl font-bold text-slate-900">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('_', ' ')}</h2>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex -space-x-2">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600`}>
-                  U{i}
-                </div>
-              ))}
-            </div>
-            <button className="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-100 transition-colors">
-              <Package size={20} />
+            <button className="bg-blue-50 text-blue-600 p-2.5 rounded-xl hover:bg-blue-100 transition-colors shadow-sm">
+              <Package size={22} />
             </button>
           </div>
         </header>
 
-        <main className="p-4 md:p-8 space-y-8 overflow-y-auto">
+        <main className="p-6 md:p-10 lg:p-12 space-y-12 overflow-y-auto">
           {activeTab === 'dashboard' && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-12">
               {/* 6 KPI Line */}
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                 {processedKPIs.map((kpi, index) => (
                   <KPICard key={index} kpi={kpi} index={index} />
                 ))}
               </div>
 
               {/* Graphical Row */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <div className="xl:col-span-2">
                   <LineChartCard />
                 </div>
-                <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl p-8 text-white relative overflow-hidden shadow-xl shadow-blue-200">
+                <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 text-white relative overflow-hidden shadow-2xl shadow-blue-300/50">
                   <div className="relative z-10">
-                    <h3 className="text-xl font-bold mb-2">Automate Your Logistics</h3>
-                    <p className="text-blue-100 text-sm mb-6 max-w-[200px]">Run the consolidation engine to find hidden savings in your route data.</p>
+                    <h3 className="text-2xl font-black mb-3">Automate Your Logistics</h3>
+                    <p className="text-blue-100 text-base mb-8 max-w-[280px] leading-relaxed">Run the consolidation engine to find hidden savings in your route data.</p>
                     <button
                       onClick={() => setActiveTab('consolidation')}
-                      className="bg-white text-blue-600 px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:bg-blue-50 transition-all flex items-center gap-2"
+                      className="bg-white text-blue-600 px-8 py-3.5 rounded-xl text-base font-bold shadow-xl hover:shadow-2xl hover:bg-blue-50 hover:-translate-y-0.5 transition-all flex items-center gap-2"
                     >
                       Process Now
-                      <ChevronRight size={16} />
+                      <ChevronRight size={18} />
                     </button>
                   </div>
-                  <Layers size={140} className="absolute -bottom-10 -right-10 opacity-10 rotate-12" />
+                  <Layers size={160} className="absolute -bottom-12 -right-12 opacity-10 rotate-12" />
                 </div>
               </div>
 
               {/* Order Overview Section */}
-              <section className="space-y-4">
+              <section className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-slate-900">Order Intelligence Overview</h3>
-                  <div className="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
-                    Dataset Size: <strong>{dataset.length}</strong> Orders
+                  <h3 className="text-3xl font-black text-slate-900">Order Intelligence Overview</h3>
+                  <div className="text-sm font-semibold text-slate-600 bg-white px-5 py-2.5 rounded-full border-2 border-slate-200 shadow-sm">
+                    Dataset Size: <strong className="text-blue-600">{dataset.length}</strong> Orders
                   </div>
                 </div>
                 <OrderOverview data={dataset} />
+              </section>
+
+              {/* Pending Optimization Queue Section */}
+              <section className="pb-12">
+                <PendingOptimizationQueue data={dataset} />
               </section>
             </motion.div>
           )}
@@ -881,6 +1037,132 @@ export default function App() {
             </motion.section>
           )}
 
+          {activeTab === 'shipments' && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                  <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Shipments Overview</h2>
+                  <p className="text-slate-500 text-lg">Manage your logistics flow and consolidation opportunities.</p>
+                </div>
+                <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2.5 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Live Data Feed: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </div>
+              </div>
+
+              {/* Filter Bar */}
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-4">
+                <div className="flex-1 min-w-[200px] relative">
+                  <Activity className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <select
+                    value={shipmentPriority}
+                    onChange={(e) => setShipmentPriority(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer capitalize"
+                  >
+                    <option>All Priorities</option>
+                    {allPriorities.map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+                <div className="flex-1 min-w-[200px] relative">
+                  <Truck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <select
+                    value={shipmentCarrier}
+                    onChange={(e) => setShipmentCarrier(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer"
+                  >
+                    <option>All Carriers</option>
+                    {allShipmentCarriers.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div className="flex-1 min-w-[200px] relative">
+                  <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                  <select
+                    value={shipmentMode}
+                    onChange={(e) => setShipmentMode(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer"
+                  >
+                    <option>All Modes</option>
+                    <option value="FTL">FTL (Full Truck Load)</option>
+                    <option value="LTL">LTL (Less Than Truckload)</option>
+                  </select>
+                </div>
+                <button
+                  onClick={() => { setShipmentCarrier('All Carriers'); setShipmentMode('All Modes'); setShipmentPriority('All Priorities'); }}
+                  className="bg-white border-2 border-slate-200 text-slate-700 font-bold px-8 py-3 rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2"
+                >
+                  <RotateCcw size={18} />
+                  Reset
+                </button>
+              </div>
+
+              {/* Shipments List */}
+              <div className="space-y-4">
+                {filteredDataset.slice(0, 15).map((d, i) => {
+                  const baseCost = d.distance_km * d.carrier_cost_per_km;
+                  const consolidatedCost = baseCost * 0.85; // Mocking savings
+                  const savings = baseCost - consolidatedCost;
+                  const utilization = d.overall_truck_utilization_percent;
+
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group flex items-center gap-6"
+                    >
+                      <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors shrink-0">
+                        <Truck size={28} />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">SHIP-2026-{3000 + i}</h4>
+                        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-0.5">
+                          {Math.floor(Math.random() * 5) + 1} ORDERS CONSOLIDATED
+                        </p>
+                      </div>
+
+                      <div className="hidden lg:flex flex-col items-end px-6 border-r border-slate-100">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Base Cost</p>
+                        <p className="text-base font-bold text-slate-400 line-through">${baseCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                      </div>
+
+                      <div className="flex flex-col items-end px-6 border-r border-slate-100">
+                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Consolidated</p>
+                        <p className="text-xl font-black text-slate-900">${consolidatedCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                      </div>
+
+                      <div className="flex flex-col items-center px-6 border-r border-slate-100">
+                        <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg text-sm font-black border border-emerald-100 flex items-center gap-1">
+                          SAVINGS ${savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          <TrendingUp size={14} />
+                        </div>
+                      </div>
+
+                      <div className="w-48 hidden xl:block px-6">
+                        <div className="flex justify-between items-end mb-2">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Utilization</p>
+                          <p className={`text-sm font-black ${utilization > 80 ? 'text-emerald-600' : utilization > 50 ? 'text-amber-500' : 'text-rose-500'}`}>{utilization}%</p>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${utilization}%` }}
+                            className={`h-full rounded-full ${utilization > 80 ? 'bg-emerald-500' : utilization > 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                          />
+                        </div>
+                      </div>
+
+                      <button className="p-3 text-slate-300 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all">
+                        <ChevronRight size={24} />
+                      </button>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
           {activeTab === 'ai' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center">
               <div className="w-20 h-20 bg-violet-50 text-violet-600 rounded-3xl flex items-center justify-center mb-6 border-2 border-violet-100 italic font-black text-2xl">
@@ -900,16 +1182,16 @@ export default function App() {
 const NavItem = ({ active, icon: Icon, label, onClick, tag }: any) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all duration-300 group ${active ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-slate-500 hover:bg-blue-50 hover:text-blue-600'}`}
+    className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${active ? 'bg-blue-50 text-blue-700 shadow-sm border border-blue-100' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent'}`}
   >
     <div className="flex items-center gap-3">
-      <Icon size={20} className={active ? 'text-white' : 'text-slate-400 group-hover:text-blue-600'} />
+      <Icon size={22} className={active ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'} strokeWidth={2} />
       <span className="text-sm font-bold tracking-tight">{label}</span>
     </div>
     {tag ? (
-      <span className={`text-[10px] px-1.5 py-0.5 rounded ${active ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-500'} font-bold uppercase`}>{tag}</span>
+      <span className={`text-[10px] px-2 py-1 rounded-md ${active ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'} font-bold uppercase tracking-wide`}>{tag}</span>
     ) : (
-      active && <ChevronRight size={16} />
+      active && <ChevronRight size={18} strokeWidth={2.5} className="text-blue-600" />
     )}
   </button>
 );
