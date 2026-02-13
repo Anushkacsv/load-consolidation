@@ -1155,39 +1155,39 @@ export default function App() {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">SHIP-2026-{3000 + i}</h4>
+                          <h4 className="text-base font-black text-slate-900 group-hover:text-blue-600 transition-colors">SHIP-2026-{3000 + i}</h4>
                           <div className="flex items-center gap-3 mt-0.5">
-                            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
                               {Math.floor(Math.random() * 5) + 1} ORDERS CONSOLIDATED
                             </p>
                             <span className="w-1 h-1 rounded-full bg-slate-300" />
-                            <p className="text-blue-600/70 font-bold text-xs uppercase tracking-widest">
+                            <p className="text-blue-600/70 font-bold text-[10px] uppercase tracking-widest">
                               {d.quantity + 120} Total Units
                             </p>
                           </div>
                         </div>
 
                         <div className="hidden lg:flex flex-col items-end px-6 border-r border-slate-100">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Base Cost</p>
-                          <p className="text-base font-bold text-slate-400 line-through">${baseCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Base Cost</p>
+                          <p className="text-sm font-bold text-slate-400 line-through">${baseCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                         </div>
 
                         <div className="flex flex-col items-end px-6 border-r border-slate-100">
-                          <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Consolidated</p>
-                          <p className="text-xl font-black text-slate-900">${consolidatedCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                          <p className="text-[9px] font-bold text-blue-600 uppercase tracking-wider mb-1">Consolidated</p>
+                          <p className="text-lg font-black text-slate-900">${consolidatedCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                         </div>
 
                         <div className="flex flex-col items-center px-6 border-r border-slate-100">
-                          <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg text-sm font-black border border-emerald-100 flex items-center gap-1">
+                          <div className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg text-xs font-black border border-emerald-100 flex items-center gap-1">
                             SAVINGS ${savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                            <TrendingUp size={14} />
+                            <TrendingUp size={12} />
                           </div>
                         </div>
 
-                        <div className="w-48 hidden xl:block px-6">
+                        <div className="w-40 hidden xl:block px-6">
                           <div className="flex justify-between items-end mb-2">
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Utilization</p>
-                            <p className={`text-sm font-black ${utilization > 80 ? 'text-emerald-600' : utilization > 50 ? 'text-amber-500' : 'text-rose-500'}`}>{utilization}%</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Utilization</p>
+                            <p className={`text-xs font-black ${utilization > 80 ? 'text-emerald-600' : utilization > 50 ? 'text-amber-500' : 'text-rose-500'}`}>{utilization}%</p>
                           </div>
                           <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                             <motion.div
