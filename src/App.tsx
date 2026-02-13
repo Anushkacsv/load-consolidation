@@ -891,9 +891,9 @@ export default function App() {
           <div className="mt-auto pt-8 border-t border-slate-100">
             <button
               onClick={() => alert('Logged out!')}
-              className="w-full flex items-center gap-3 p-4 rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300 font-bold group"
+              className="w-full flex items-center gap-3 p-4 rounded-xl text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 font-bold group"
             >
-              <LogOut size={22} className="text-slate-400 group-hover:text-rose-600" />
+              <LogOut size={22} className="text-slate-400 group-hover:text-blue-600" />
               <span className="text-sm tracking-tight">Log Out</span>
             </button>
           </div>
