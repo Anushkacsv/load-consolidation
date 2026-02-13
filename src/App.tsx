@@ -883,7 +883,7 @@ export default function App() {
               active={activeTab === 'ai'}
               onClick={() => { setActiveTab('ai'); setIsSidebarOpen(false); }}
               icon={Activity}
-              label="AI Suggestions"
+              label="AI Recommendations"
               tag="Upcoming"
             />
           </nav>
@@ -1214,8 +1214,8 @@ export default function App() {
                 <div className="w-20 h-20 bg-violet-50 text-violet-600 rounded-3xl flex items-center justify-center mb-6 border-2 border-violet-100 italic font-black text-2xl">
                   AI
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Predictive AI Suggestions</h3>
-                <p className="text-slate-500 max-w-sm mx-auto mb-8 text-lg">We're building an AI that predicts market rate fluctuations and suggests pre-booking slots.</p>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">Predictive AI Recommendations</h3>
+                <p className="text-slate-500 max-w-sm mx-auto mb-8 text-lg">We're building an AI that predicts market rate fluctuations and recommends pre-booking slots.</p>
                 <div className="px-6 py-2 bg-slate-200 rounded-full text-xs font-bold text-slate-600 uppercase tracking-widest">Available Q3 2026</div>
               </motion.div>
             )}
