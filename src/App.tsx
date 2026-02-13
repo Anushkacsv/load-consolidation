@@ -970,7 +970,7 @@ export default function App() {
                 <div className="flex items-end justify-between border-b border-slate-200 pb-4">
                   <div>
                     <h2 className="text-2xl font-bold text-slate-900">Consolidation Engine</h2>
-                    <p className="text-slate-500 mt-1">Identify shipping efficiency opportunities using our n8n agent.</p>
+                    <p className="text-slate-500 mt-1">Optimize your shipments with LoCo</p>
                   </div>
                 </div>
 
@@ -1000,7 +1000,7 @@ export default function App() {
                           onClick={handleRunAgent}
                           className="group bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-200 transform hover:-translate-y-1 transition-all flex items-center gap-3 mx-auto text-lg"
                         >
-                          Start Consolidation Agent
+                          Start Consolidation
                           <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                       </motion.div>
@@ -1020,7 +1020,7 @@ export default function App() {
                               <Zap className="text-blue-600 animate-pulse" size={32} />
                             </div>
                           </div>
-                          <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Agent is Optimizing</h3>
+                          <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">LoCo is Optimizing</h3>
                           <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 space-y-6 text-left">
                             <LoadingStep label="Geographic Cluster Identification" active={loadingStep === 1} completed={loadingStep > 1} />
                             <LoadingStep label="Carrier Rate Multi-Point Analysis" active={loadingStep === 2} completed={loadingStep > 2} />
