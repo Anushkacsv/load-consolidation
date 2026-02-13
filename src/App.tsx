@@ -954,9 +954,6 @@ export default function App() {
                 <section className="space-y-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">Order Intelligence Overview</h3>
-                    <div className="text-sm font-semibold text-slate-600 bg-white px-5 py-2.5 rounded-full border-2 border-slate-200 shadow-sm w-fit">
-                      Dataset Size: <strong className="text-blue-600">{dataset.length}</strong> Orders
-                    </div>
                   </div>
                   <OrderOverview data={dataset} />
                 </section>
