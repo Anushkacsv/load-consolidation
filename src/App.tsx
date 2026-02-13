@@ -327,19 +327,19 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.05 }}
-    className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-lg border border-slate-100 hover:border-blue-100 transition-all duration-300 relative overflow-hidden group"
+    className="bg-white rounded-xl p-2.5 shadow-sm hover:shadow-md border border-slate-100 hover:border-blue-100 transition-all duration-300 relative overflow-hidden group"
   >
-    {/* Subtle Background Icon - Moved to Bottom Right & Cleaned Up */}
-    <div className="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500 pointer-events-none transform rotate-12 group-hover:scale-110 group-hover:rotate-6">
-      <kpi.icon size={120} className="text-slate-800" strokeWidth={1.5} />
+    {/* Very subtle background icon - hidden on small viewports to save space */}
+    <div className="absolute -bottom-2 -right-2 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none transform rotate-12 group-hover:scale-110">
+      <kpi.icon size={60} className="text-slate-800" strokeWidth={1.5} />
     </div>
 
-    <div className="flex items-start justify-between mb-4 relative z-10">
-      <div className={`p-3 rounded-xl bg-slate-50 ${kpi.color} bg-opacity-[0.1] group-hover:bg-opacity-20 transition-colors shadow-sm`}>
-        <kpi.icon size={24} className={kpi.color} />
+    <div className="flex items-start justify-between mb-2 relative z-10">
+      <div className={`p-1.5 rounded-lg bg-slate-50 ${kpi.color} bg-opacity-[0.08] group-hover:bg-opacity-15 transition-colors shadow-sm`}>
+        <kpi.icon size={14} className={kpi.color} />
       </div>
       {kpi.change && (
-        <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${(kpi.trend === 'up' && kpi.label !== 'Total Orders' && kpi.label !== 'Consolidation Ops') ||
+        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full border ${(kpi.trend === 'up' && kpi.label !== 'Total Orders' && kpi.label !== 'Consolidation Ops') ||
           (kpi.trend === 'down' && (kpi.label === 'Total Shipments' || kpi.label === 'Avg Ship Cost'))
           ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
           : (kpi.trend === 'down' && kpi.label !== 'Total Shipments' && kpi.label !== 'Avg Ship Cost')
@@ -354,8 +354,8 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
     </div>
 
     <div className="relative z-10">
-      <h3 className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1 truncate">{kpi.label}</h3>
-      <p className="text-2xl font-extrabold text-slate-900 tracking-tight">{kpi.value}</p>
+      <h3 className="text-slate-500 text-[8px] font-bold uppercase tracking-widest mb-0.5 truncate">{kpi.label}</h3>
+      <p className="text-lg font-black text-slate-900 tracking-tight leading-none">{kpi.value}</p>
     </div>
   </motion.div>
 );
@@ -848,7 +848,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`fixed lg:sticky inset-y-0 left-0 top-0 h-screen w-72 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 shadow-xl lg:shadow-none ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed inset-y-0 left-0 h-screen w-72 bg-white border-r border-slate-200 z-50 transform transition-transform duration-300 shadow-xl lg:shadow-none lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-full flex flex-col p-8">
           <div className="flex items-center gap-4 mb-12">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-200 ring-4 ring-blue-50">
@@ -901,7 +901,7 @@ export default function App() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen w-full relative overflow-x-hidden">
+      <div className="flex-1 flex flex-col min-h-screen w-full relative overflow-x-hidden lg:pl-72">
         {/* Header */}
         <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-30 px-4 md:px-8 lg:px-10 h-20 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-4">
@@ -923,7 +923,7 @@ export default function App() {
             {activeTab === 'dashboard' && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
                 {/* 6 KPI Line */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
                   {processedKPIs.map((kpi, index) => (
                     <KPICard key={index} kpi={kpi} index={index} />
                   ))}
