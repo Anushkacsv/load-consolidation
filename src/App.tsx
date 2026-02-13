@@ -4,7 +4,7 @@ import {
   TrendingUp, Box, Layers, ArrowRight, CheckCircle2, AlertCircle,
   Package, Table, List, BarChart2, Menu, X, ChevronRight,
   MapPin, PieChart as PieIcon, Activity, Zap, MoreHorizontal,
-  Calendar, ArrowUpRight, Bell, Send
+  Calendar, ArrowUpRight, Bell, Send, LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -186,6 +186,12 @@ const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
               </th>
               <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <div className="flex items-center gap-2">
+                  <List size={14} />
+                  Items
+                </div>
+              </th>
+              <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                <div className="flex items-center gap-2">
                   <Box size={14} />
                   Volume
                 </div>
@@ -239,6 +245,12 @@ const PendingOptimizationQueue = ({ data }: { data: any[] }) => {
                       <div className="w-16 h-1 bg-slate-100 rounded-full mt-1 overflow-hidden">
                         <div className="h-full bg-blue-500/30" style={{ width: `${Math.min(100, (weight / 5000) * 100)}%` }} />
                       </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-slate-900 font-bold text-sm tracking-tight">{order.quantity.toLocaleString()} <span className="text-[10px] text-slate-400 uppercase font-black">Units</span></span>
+                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tight mt-0.5">{order.order_pallet_count} Pallets</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-slate-600 font-bold text-sm">{volume.toFixed(1)} <span className="text-[10px] text-slate-400 uppercase ml-0.5">cu m</span></td>
@@ -350,22 +362,27 @@ const KPICard = ({ kpi, index }: { kpi: KPI; index: number }) => (
 
 const LineChartCard = () => {
   const chartData = [
-    { name: 'Mon', value: 45 }, { name: 'Tue', value: 52 },
-    { name: 'Wed', value: 48 }, { name: 'Thu', value: 61 },
-    { name: 'Fri', value: 55 }, { name: 'Sat', value: 58.8 },
-    { name: 'Sun', value: 54 },
+    { name: 'Mon', usage: 45, cost: 82 }, { name: 'Tue', usage: 52, cost: 78 },
+    { name: 'Wed', usage: 48, cost: 85 }, { name: 'Thu', usage: 61, cost: 72 },
+    { name: 'Fri', usage: 55, cost: 75 }, { name: 'Sat', usage: 58.8, cost: 68 },
+    { name: 'Sun', usage: 54, cost: 70 },
   ];
 
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-2xl font-bold text-slate-900 mb-2">Truck Utilization Trend</h3>
-          <p className="text-sm text-slate-500 flex items-center gap-2">
-            Current Rate: <span className="font-bold text-emerald-600 text-lg">58.8%</span> <span className="text-emerald-600 font-semibold">(+5.2%)</span>
-          </p>
+          <h3 className="text-2xl font-bold text-slate-900 mb-2">Network Efficiency Trend</h3>
+          <div className="flex items-center gap-6">
+            <p className="text-sm text-slate-500 flex items-center gap-2">
+              Utilization: <span className="font-bold text-emerald-600 text-lg">58.8%</span>
+            </p>
+            <p className="text-sm text-slate-500 flex items-center gap-2 border-l border-slate-200 pl-6">
+              Cost/Ton: <span className="font-bold text-blue-600 text-lg">$68.2</span>
+            </p>
+          </div>
         </div>
-        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl shadow-sm">
+        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl shadow-sm">
           <Activity size={24} />
         </div>
       </div>
@@ -373,18 +390,24 @@ const LineChartCard = () => {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorUsage" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
             <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-            <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} unit="%" />
+            <YAxis yAxisId="left" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} unit="%" />
+            <YAxis yAxisId="right" orientation="right" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} unit="$" />
             <Tooltip
               contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />
-            <Area type="monotone" dataKey="value" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
+            <Area yAxisId="left" type="monotone" dataKey="usage" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorUsage)" name="Usage %" />
+            <Area yAxisId="right" type="monotone" dataKey="cost" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorCost)" name="Cost/Ton" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -402,7 +425,12 @@ const OrderOverview = ({ data }: { data: any[] }) => {
   // Aggregate Goods Type
   const typeCounts: { [key: string]: number } = {};
   data.forEach(d => { if (d.goods_type) typeCounts[d.goods_type] = (typeCounts[d.goods_type] || 0) + 1; });
-  const goodsDistribution = Object.entries(typeCounts).map(([name, value]) => ({ name, value }));
+  const totalGoodsType = Object.values(typeCounts).reduce((a, b) => a + b, 0);
+  const goodsDistribution = Object.entries(typeCounts).map(([name, value]) => ({
+    name,
+    value,
+    percent: ((value / totalGoodsType) * 100).toFixed(1)
+  }));
 
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -473,7 +501,7 @@ const OrderOverview = ({ data }: { data: any[] }) => {
               <div key={item.name} className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
                 <span className="text-sm font-semibold text-slate-700 capitalize">{item.name}</span>
-                <span className="text-sm font-bold text-slate-900">({item.value})</span>
+                <span className="text-sm font-bold text-slate-900">({item.percent}%)</span>
               </div>
             ))}
           </div>
@@ -606,6 +634,7 @@ const ShipmentTable = ({ shipments }: { shipments: Shipment[] }) => (
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Carrier</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Sensitivity</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Weight</th>
+            <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Units</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Pallet</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Urgency</th>
             <th className="p-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Strategy</th>
@@ -623,6 +652,7 @@ const ShipmentTable = ({ shipments }: { shipments: Shipment[] }) => (
               <td className="p-4 text-sm font-medium text-slate-900">{shipment.carrier}</td>
               <td className="p-4 text-sm text-slate-700">{shipment.sensitivity}</td>
               <td className="p-4 text-sm text-slate-700">{shipment.weight_class}</td>
+              <td className="p-4 text-sm text-slate-700">{Math.floor(Math.random() * 500) + 100}</td>
               <td className="p-4 text-sm text-slate-700">{shipment.pallet_class}</td>
               <td className="p-4 text-sm">
                 <span className={`px-2 py-1 rounded text-xs font-medium ${shipment.urgency.toLowerCase().includes('high') || shipment.urgency.toLowerCase().includes('express')
@@ -803,7 +833,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 text-slate-900 font-sans flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 text-slate-900 font-sans flex overflow-x-hidden">
       {/* Sidebar Overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
@@ -858,14 +888,22 @@ export default function App() {
             />
           </nav>
 
-
+          <div className="mt-auto pt-8 border-t border-slate-100">
+            <button
+              onClick={() => alert('Logged out!')}
+              className="w-full flex items-center gap-3 p-4 rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300 font-bold group"
+            >
+              <LogOut size={22} className="text-slate-400 group-hover:text-rose-600" />
+              <span className="text-sm tracking-tight">Log Out</span>
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen max-w-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-screen w-full relative overflow-x-hidden">
         {/* Header */}
-        <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-30 px-6 md:px-10 lg:px-12 h-20 flex items-center justify-between shadow-sm">
+        <header className="bg-white/90 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-30 px-4 md:px-8 lg:px-10 h-20 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2.5 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
               <Menu size={22} />
@@ -880,300 +918,308 @@ export default function App() {
           </div>
         </header>
 
-        <main className="p-6 md:p-10 lg:p-12 space-y-8 overflow-y-auto">
-          {activeTab === 'dashboard' && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              {/* 6 KPI Line */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-                {processedKPIs.map((kpi, index) => (
-                  <KPICard key={index} kpi={kpi} index={index} />
-                ))}
-              </div>
-
-              {/* Graphical Row */}
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <div className="xl:col-span-2">
-                  <LineChartCard />
+        <main className="flex-1 overflow-y-auto w-full">
+          <div className="max-w-[1700px] mx-auto p-4 md:p-8 lg:p-10 space-y-6 md:space-y-8">
+            {activeTab === 'dashboard' && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+                {/* 6 KPI Line */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+                  {processedKPIs.map((kpi, index) => (
+                    <KPICard key={index} kpi={kpi} index={index} />
+                  ))}
                 </div>
-                <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 text-white relative overflow-hidden shadow-2xl shadow-blue-300/50">
-                  <div className="relative z-10">
-                    <h3 className="text-2xl font-black mb-3">Automate Your Logistics</h3>
-                    <p className="text-blue-100 text-base mb-8 max-w-[280px] leading-relaxed">Run the consolidation engine to find hidden savings in your route data.</p>
-                    <button
-                      onClick={() => setActiveTab('consolidation')}
-                      className="bg-white text-blue-600 px-8 py-3.5 rounded-xl text-base font-bold shadow-xl hover:shadow-2xl hover:bg-blue-50 hover:-translate-y-0.5 transition-all flex items-center gap-2"
-                    >
-                      Process Now
-                      <ChevronRight size={18} />
-                    </button>
+
+                {/* Graphical Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="lg:col-span-2 min-h-[400px]">
+                    <LineChartCard />
                   </div>
-                  <Layers size={160} className="absolute -bottom-12 -right-12 opacity-10 rotate-12" />
-                </div>
-              </div>
-
-              {/* Order Overview Section */}
-              <section className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-3xl font-black text-slate-900">Order Intelligence Overview</h3>
-                  <div className="text-sm font-semibold text-slate-600 bg-white px-5 py-2.5 rounded-full border-2 border-slate-200 shadow-sm">
-                    Dataset Size: <strong className="text-blue-600">{dataset.length}</strong> Orders
-                  </div>
-                </div>
-                <OrderOverview data={dataset} />
-              </section>
-
-              {/* Pending Optimization Queue Section */}
-              <section className="pb-12">
-                <PendingOptimizationQueue data={dataset} />
-              </section>
-            </motion.div>
-          )}
-
-          {activeTab === 'consolidation' && (
-            <motion.section initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
-              <div className="flex items-end justify-between border-b border-slate-200 pb-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900">Consolidation Engine</h2>
-                  <p className="text-slate-500 mt-1">Identify shipping efficiency opportunities using our n8n agent.</p>
-                </div>
-              </div>
-
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-center gap-3">
-                  <AlertCircle size={20} />
-                  <p className="text-sm font-medium">{error}</p>
-                </div>
-              )}
-
-              <div className="relative min-h-[400px]">
-                <AnimatePresence mode="wait">
-                  {shipments.length === 0 && !isProcessing && (
-                    <motion.div
-                      key="start"
-                      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                      className="bg-white rounded-2xl shadow-sm border border-slate-200 p-20 text-center"
-                    >
-                      <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600 border-4 border-white shadow-inner">
-                        <Box size={40} />
-                      </div>
-                      <h3 className="text-2xl font-bold text-slate-900 mb-2">Ready to Process</h3>
-                      <p className="text-slate-500 max-w-md mx-auto mb-10 text-lg">
-                        Processing <strong>{dataset.length}</strong> orders for geographic and route-based consolidation.
-                      </p>
+                  <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-300/50 flex flex-col justify-center min-h-[300px] lg:min-h-full">
+                    <div className="relative z-10">
+                      <h3 className="text-2xl md:text-3xl font-black mb-3 leading-tight text-white">Automate Your Logistics</h3>
+                      <p className="text-blue-100 text-base mb-8 max-w-[320px] leading-relaxed">Run the consolidation engine to find hidden savings in your route data.</p>
                       <button
-                        onClick={handleRunAgent}
-                        className="group bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-200 transform hover:-translate-y-1 transition-all flex items-center gap-3 mx-auto text-lg"
+                        onClick={() => setActiveTab('consolidation')}
+                        className="bg-white text-blue-600 px-8 py-3.5 rounded-xl text-base font-bold shadow-xl hover:shadow-2xl hover:bg-blue-50 hover:-translate-y-0.5 transition-all flex items-center gap-2 w-fit"
                       >
-                        Start Consolidation Agent
-                        <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                        Process Now
+                        <ChevronRight size={18} />
                       </button>
-                    </motion.div>
-                  )}
-
-                  {isProcessing && (
-                    <motion.div
-                      key="processing"
-                      initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-                      className="bg-white rounded-2xl shadow-xl border border-blue-50 p-12 relative overflow-hidden"
-                    >
-                      <div className="max-w-2xl mx-auto space-y-12 relative z-10 text-center">
-                        <div className="relative w-24 h-24 mx-auto mb-6">
-                          <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                          <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Zap className="text-blue-600 animate-pulse" size={32} />
-                          </div>
-                        </div>
-                        <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Agent is Optimizing</h3>
-                        <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 space-y-6 text-left">
-                          <LoadingStep label="Geographic Cluster Identification" active={loadingStep === 1} completed={loadingStep > 1} />
-                          <LoadingStep label="Carrier Rate Multi-Point Analysis" active={loadingStep === 2} completed={loadingStep > 2} />
-                          <LoadingStep label="Final Shipment Plan Generation" active={loadingStep === 3} completed={loadingStep > 3} />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {shipments.length > 0 && !isProcessing && (
-                    <motion.div key="result" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
-                          <CheckCircle2 size={18} />
-                          Found {shipments.length} Consolidation Strategies
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
-                            <button onClick={() => setViewType('cards')} className={`p-2 rounded-lg transition-all ${viewType === 'cards' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400'}`}>
-                              <LayoutDashboard size={18} />
-                            </button>
-                            <button onClick={() => setViewType('table')} className={`p-2 rounded-lg transition-all ${viewType === 'table' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400'}`}>
-                              <Table size={18} />
-                            </button>
-                          </div>
-                          <button onClick={() => setShipments([])} className="bg-white border border-slate-200 p-2 rounded-xl text-slate-500 hover:text-blue-600 transition-all shadow-sm">
-                            <RotateCcw size={18} />
-                          </button>
-                        </div>
-                      </div>
-
-                      {viewType === 'cards' ? (
-                        <div className="space-y-8">
-                          {filteredShipments.slice(0, visibleCount).map((shipment, idx) => (
-                            <ShipmentDetail key={shipment.id || idx} shipment={shipment} />
-                          ))}
-                          {visibleCount < filteredShipments.length && (
-                            <button onClick={() => setVisibleCount(c => c + 3)} className="w-full py-4 bg-white border-2 border-dashed border-slate-200 rounded-xl text-slate-500 font-bold hover:border-blue-300 hover:text-blue-600 transition-all">
-                              View More Results ({filteredShipments.length - visibleCount})
-                            </button>
-                          )}
-                        </div>
-                      ) : (
-                        <ShipmentTable shipments={filteredShipments} />
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.section>
-          )}
-
-          {activeTab === 'shipments' && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                  <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Shipments Overview</h2>
-                  <p className="text-slate-500 text-lg">Manage your logistics flow and consolidation opportunities.</p>
+                    </div>
+                    <Layers size={180} className="absolute -bottom-12 -right-12 opacity-10 rotate-12 hidden md:block" />
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2.5 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Live Data Feed: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </div>
-              </div>
 
-              {/* Filter Bar */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-4">
-                <div className="flex-1 min-w-[200px] relative">
-                  <Activity className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <select
-                    value={shipmentPriority}
-                    onChange={(e) => setShipmentPriority(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer capitalize"
-                  >
-                    <option>All Priorities</option>
-                    {allPriorities.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-                <div className="flex-1 min-w-[200px] relative">
-                  <Truck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <select
-                    value={shipmentCarrier}
-                    onChange={(e) => setShipmentCarrier(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer"
-                  >
-                    <option>All Carriers</option>
-                    {allShipmentCarriers.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div className="flex-1 min-w-[200px] relative">
-                  <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <select
-                    value={shipmentMode}
-                    onChange={(e) => setShipmentMode(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer"
-                  >
-                    <option>All Modes</option>
-                    <option value="FTL">FTL (Full Truck Load)</option>
-                    <option value="LTL">LTL (Less Than Truckload)</option>
-                  </select>
-                </div>
-                <button
-                  onClick={() => { setShipmentCarrier('All Carriers'); setShipmentMode('All Modes'); setShipmentPriority('All Priorities'); }}
-                  className="bg-white border-2 border-slate-200 text-slate-700 font-bold px-8 py-3 rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2"
-                >
-                  <RotateCcw size={18} />
-                  Reset
-                </button>
-              </div>
+                {/* Order Overview Section */}
+                <section className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">Order Intelligence Overview</h3>
+                    <div className="text-sm font-semibold text-slate-600 bg-white px-5 py-2.5 rounded-full border-2 border-slate-200 shadow-sm w-fit">
+                      Dataset Size: <strong className="text-blue-600">{dataset.length}</strong> Orders
+                    </div>
+                  </div>
+                  <OrderOverview data={dataset} />
+                </section>
 
-              {/* Shipments List */}
-              <div className="space-y-4">
-                {filteredDataset.slice(0, 15).map((d, i) => {
-                  const baseCost = d.distance_km * d.carrier_cost_per_km;
-                  const consolidatedCost = baseCost * 0.85; // Mocking savings
-                  const savings = baseCost - consolidatedCost;
-                  const utilization = d.overall_truck_utilization_percent;
+                {/* Pending Optimization Queue Section */}
+                <section className="pb-12">
+                  <PendingOptimizationQueue data={dataset} />
+                </section>
+              </motion.div>
+            )}
 
-                  return (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group flex items-center gap-6"
-                    >
-                      <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors shrink-0">
-                        <Truck size={28} />
-                      </div>
+            {activeTab === 'consolidation' && (
+              <motion.section initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
+                <div className="flex items-end justify-between border-b border-slate-200 pb-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Consolidation Engine</h2>
+                    <p className="text-slate-500 mt-1">Identify shipping efficiency opportunities using our n8n agent.</p>
+                  </div>
+                </div>
 
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">SHIP-2026-{3000 + i}</h4>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-0.5">
-                          {Math.floor(Math.random() * 5) + 1} ORDERS CONSOLIDATED
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg flex items-center gap-3">
+                    <AlertCircle size={20} />
+                    <p className="text-sm font-medium">{error}</p>
+                  </div>
+                )}
+
+                <div className="relative min-h-[400px]">
+                  <AnimatePresence mode="wait">
+                    {shipments.length === 0 && !isProcessing && (
+                      <motion.div
+                        key="start"
+                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                        className="bg-white rounded-2xl shadow-sm border border-slate-200 p-20 text-center"
+                      >
+                        <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600 border-4 border-white shadow-inner">
+                          <Box size={40} />
+                        </div>
+                        <h3 className="text-2xl font-bold text-slate-900 mb-2">Ready to Process</h3>
+                        <p className="text-slate-500 max-w-md mx-auto mb-10 text-lg">
+                          Processing <strong>{dataset.length}</strong> orders for geographic and route-based consolidation.
                         </p>
-                      </div>
+                        <button
+                          onClick={handleRunAgent}
+                          className="group bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl shadow-blue-200 transform hover:-translate-y-1 transition-all flex items-center gap-3 mx-auto text-lg"
+                        >
+                          Start Consolidation Agent
+                          <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                      </motion.div>
+                    )}
 
-                      <div className="hidden lg:flex flex-col items-end px-6 border-r border-slate-100">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Base Cost</p>
-                        <p className="text-base font-bold text-slate-400 line-through">${baseCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                      </div>
-
-                      <div className="flex flex-col items-end px-6 border-r border-slate-100">
-                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Consolidated</p>
-                        <p className="text-xl font-black text-slate-900">${consolidatedCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                      </div>
-
-                      <div className="flex flex-col items-center px-6 border-r border-slate-100">
-                        <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg text-sm font-black border border-emerald-100 flex items-center gap-1">
-                          SAVINGS ${savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                          <TrendingUp size={14} />
+                    {isProcessing && (
+                      <motion.div
+                        key="processing"
+                        initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white rounded-2xl shadow-xl border border-blue-50 p-12 relative overflow-hidden"
+                      >
+                        <div className="max-w-2xl mx-auto space-y-12 relative z-10 text-center">
+                          <div className="relative w-24 h-24 mx-auto mb-6">
+                            <div className="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                            <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Zap className="text-blue-600 animate-pulse" size={32} />
+                            </div>
+                          </div>
+                          <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Agent is Optimizing</h3>
+                          <div className="bg-slate-50 p-8 rounded-2xl border border-slate-100 space-y-6 text-left">
+                            <LoadingStep label="Geographic Cluster Identification" active={loadingStep === 1} completed={loadingStep > 1} />
+                            <LoadingStep label="Carrier Rate Multi-Point Analysis" active={loadingStep === 2} completed={loadingStep > 2} />
+                            <LoadingStep label="Final Shipment Plan Generation" active={loadingStep === 3} completed={loadingStep > 3} />
+                          </div>
                         </div>
-                      </div>
+                      </motion.div>
+                    )}
 
-                      <div className="w-48 hidden xl:block px-6">
-                        <div className="flex justify-between items-end mb-2">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Utilization</p>
-                          <p className={`text-sm font-black ${utilization > 80 ? 'text-emerald-600' : utilization > 50 ? 'text-amber-500' : 'text-rose-500'}`}>{utilization}%</p>
+                    {shipments.length > 0 && !isProcessing && (
+                      <motion.div key="result" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
+                            <CheckCircle2 size={18} />
+                            Found {shipments.length} Consolidation Strategies
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                              <button onClick={() => setViewType('cards')} className={`p-2 rounded-lg transition-all ${viewType === 'cards' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400'}`}>
+                                <LayoutDashboard size={18} />
+                              </button>
+                              <button onClick={() => setViewType('table')} className={`p-2 rounded-lg transition-all ${viewType === 'table' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400'}`}>
+                                <Table size={18} />
+                              </button>
+                            </div>
+                            <button onClick={() => setShipments([])} className="bg-white border border-slate-200 p-2 rounded-xl text-slate-500 hover:text-blue-600 transition-all shadow-sm">
+                              <RotateCcw size={18} />
+                            </button>
+                          </div>
                         </div>
-                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${utilization}%` }}
-                            className={`h-full rounded-full ${utilization > 80 ? 'bg-emerald-500' : utilization > 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
-                          />
+
+                        {viewType === 'cards' ? (
+                          <div className="space-y-8">
+                            {filteredShipments.slice(0, visibleCount).map((shipment, idx) => (
+                              <ShipmentDetail key={shipment.id || idx} shipment={shipment} />
+                            ))}
+                            {visibleCount < filteredShipments.length && (
+                              <button onClick={() => setVisibleCount(c => c + 3)} className="w-full py-4 bg-white border-2 border-dashed border-slate-200 rounded-xl text-slate-500 font-bold hover:border-blue-300 hover:text-blue-600 transition-all">
+                                View More Results ({filteredShipments.length - visibleCount})
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <ShipmentTable shipments={filteredShipments} />
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.section>
+            )}
+
+            {activeTab === 'shipments' && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                  <div>
+                    <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Shipments Overview</h2>
+                    <p className="text-slate-500 text-lg">Manage your logistics flow and consolidation opportunities.</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-2.5 rounded-full text-sm font-bold border border-emerald-100 shadow-sm">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Live Data Feed: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </div>
+                </div>
+
+                {/* Filter Bar */}
+                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-4">
+                  <div className="flex-1 min-w-[200px] relative">
+                    <Activity className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <select
+                      value={shipmentPriority}
+                      onChange={(e) => setShipmentPriority(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer capitalize"
+                    >
+                      <option>All Priorities</option>
+                      {allPriorities.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex-1 min-w-[200px] relative">
+                    <Truck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <select
+                      value={shipmentCarrier}
+                      onChange={(e) => setShipmentCarrier(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer"
+                    >
+                      <option>All Carriers</option>
+                      {allShipmentCarriers.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex-1 min-w-[200px] relative">
+                    <Layers className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <select
+                      value={shipmentMode}
+                      onChange={(e) => setShipmentMode(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium cursor-pointer"
+                    >
+                      <option>All Modes</option>
+                      <option value="FTL">FTL (Full Truck Load)</option>
+                      <option value="LTL">LTL (Less Than Truckload)</option>
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => { setShipmentCarrier('All Carriers'); setShipmentMode('All Modes'); setShipmentPriority('All Priorities'); }}
+                    className="bg-white border-2 border-slate-200 text-slate-700 font-bold px-8 py-3 rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2"
+                  >
+                    <RotateCcw size={18} />
+                    Reset
+                  </button>
+                </div>
+
+                {/* Shipments List */}
+                <div className="space-y-4">
+                  {filteredDataset.slice(0, 15).map((d, i) => {
+                    const baseCost = d.distance_km * d.carrier_cost_per_km;
+                    const consolidatedCost = baseCost * 0.85; // Mocking savings
+                    const savings = baseCost - consolidatedCost;
+                    const utilization = d.overall_truck_utilization_percent;
+
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group flex items-center gap-6"
+                      >
+                        <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors shrink-0">
+                          <Truck size={28} />
                         </div>
-                      </div>
 
-                      <button className="bg-rose-50 text-rose-600 font-bold px-4 py-2 rounded-xl text-xs hover:bg-rose-600 hover:text-white transition-all flex items-center gap-2 border border-rose-100 shadow-sm ml-auto transform group-hover:scale-105">
-                        <Bell size={14} />
-                        Send Alert
-                      </button>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">SHIP-2026-{3000 + i}</h4>
+                          <div className="flex items-center gap-3 mt-0.5">
+                            <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">
+                              {Math.floor(Math.random() * 5) + 1} ORDERS CONSOLIDATED
+                            </p>
+                            <span className="w-1 h-1 rounded-full bg-slate-300" />
+                            <p className="text-blue-600/70 font-bold text-xs uppercase tracking-widest">
+                              {d.quantity + 120} Total Units
+                            </p>
+                          </div>
+                        </div>
 
-          {activeTab === 'ai' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center">
-              <div className="w-20 h-20 bg-violet-50 text-violet-600 rounded-3xl flex items-center justify-center mb-6 border-2 border-violet-100 italic font-black text-2xl">
-                AI
-              </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-2">Predictive AI Suggestions</h3>
-              <p className="text-slate-500 max-w-sm mx-auto mb-8 text-lg">We're building an AI that predicts market rate fluctuations and suggests pre-booking slots.</p>
-              <div className="px-6 py-2 bg-slate-200 rounded-full text-xs font-bold text-slate-600 uppercase tracking-widest">Available Q3 2026</div>
-            </motion.div>
-          )}
+                        <div className="hidden lg:flex flex-col items-end px-6 border-r border-slate-100">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Base Cost</p>
+                          <p className="text-base font-bold text-slate-400 line-through">${baseCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                        </div>
+
+                        <div className="flex flex-col items-end px-6 border-r border-slate-100">
+                          <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Consolidated</p>
+                          <p className="text-xl font-black text-slate-900">${consolidatedCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+                        </div>
+
+                        <div className="flex flex-col items-center px-6 border-r border-slate-100">
+                          <div className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-lg text-sm font-black border border-emerald-100 flex items-center gap-1">
+                            SAVINGS ${savings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                            <TrendingUp size={14} />
+                          </div>
+                        </div>
+
+                        <div className="w-48 hidden xl:block px-6">
+                          <div className="flex justify-between items-end mb-2">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Utilization</p>
+                            <p className={`text-sm font-black ${utilization > 80 ? 'text-emerald-600' : utilization > 50 ? 'text-amber-500' : 'text-rose-500'}`}>{utilization}%</p>
+                          </div>
+                          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${utilization}%` }}
+                              className={`h-full rounded-full ${utilization > 80 ? 'bg-emerald-500' : utilization > 50 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                            />
+                          </div>
+                        </div>
+
+                        <button className="bg-rose-50 text-rose-600 font-bold px-4 py-2 rounded-xl text-xs hover:bg-rose-600 hover:text-white transition-all flex items-center gap-2 border border-rose-100 shadow-sm ml-auto transform group-hover:scale-105">
+                          <Bell size={14} />
+                          Send Alert
+                        </button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'ai' && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center p-20 text-center">
+                <div className="w-20 h-20 bg-violet-50 text-violet-600 rounded-3xl flex items-center justify-center mb-6 border-2 border-violet-100 italic font-black text-2xl">
+                  AI
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-2">Predictive AI Suggestions</h3>
+                <p className="text-slate-500 max-w-sm mx-auto mb-8 text-lg">We're building an AI that predicts market rate fluctuations and suggests pre-booking slots.</p>
+                <div className="px-6 py-2 bg-slate-200 rounded-full text-xs font-bold text-slate-600 uppercase tracking-widest">Available Q3 2026</div>
+              </motion.div>
+            )}
+          </div>
         </main>
       </div>
     </div>
