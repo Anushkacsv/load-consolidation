@@ -1,0 +1,11 @@
+
+  # Load Consolidation Dashboard
+
+  This is a code bundle for Load Consolidation Dashboard. The original project is available at https://www.figma.com/design/gIbg4BzIy7722tbhZI40eo/Load-Consolidation-Dashboard.
+
+  ## Running the code
+
+  Run `npm i` to install the dependencies.
+
+  Run `npm run dev` to start the development server.
+  
