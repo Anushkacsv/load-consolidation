@@ -908,10 +908,7 @@ export default function App() {
             <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2.5 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
               <Menu size={22} />
             </button>
-            <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="OFI Logo" className="w-8 h-8 object-contain" />
-              <h2 className="text-2xl font-bold text-slate-900">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('_', ' ')}</h2>
-            </div>
+            <h2 className="text-2xl font-bold text-slate-900">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('_', ' ')}</h2>
           </div>
 
           <div className="flex items-center gap-4">
